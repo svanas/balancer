@@ -1,0 +1,163 @@
+object frmMain: TfrmMain
+  Left = 0
+  Top = 0
+  Caption = 'Balancer'
+  ClientHeight = 269
+  ClientWidth = 437
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+  object btnTrade: TButton
+    Position.X = 178.000000000000000000
+    Position.Y = 231.000000000000000000
+    TabOrder = 5
+    Text = 'Trade'
+    OnClick = btnTradeClick
+  end
+  object cboChain: TComboBox
+    ItemIndex = 1
+    Position.X = 329.000000000000000000
+    Position.Y = 8.000000000000000000
+    TabOrder = 1
+    OnChange = cboChainChange
+    object Ethereum: TListBoxItem
+      Tag = 1
+      TabOrder = 41
+      Text = 'Ethereum'
+    end
+    object Kovan: TListBoxItem
+      Tag = 42
+      Size.Width = 19.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 42
+      Text = 'Kovan'
+    end
+  end
+  object rctAssetIn: TRectangle
+    Fill.Color = claWhite
+    Position.X = 83.000000000000000000
+    Position.Y = 46.000000000000000000
+    Size.Width = 277.000000000000000000
+    Size.Height = 80.000000000000000000
+    Size.PlatformDefault = False
+    Stroke.Color = claSilver
+    XRadius = 10.000000000000000000
+    YRadius = 10.000000000000000000
+    object cboAssetIn: TComboBox
+      Position.X = 20.000000000000000000
+      Position.Y = 20.000000000000000000
+      TabOrder = 0
+      OnChange = cboAssetChange
+    end
+    object lblAssetIn: TLabel
+      Position.X = 20.000000000000000000
+      Position.Y = 50.000000000000000000
+      Size.Width = 237.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'lblAssetIn'
+      TabOrder = 2
+    end
+    object edtAssetIn: TNumberBox
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 1
+      Cursor = crIBeam
+      ValueType = Float
+      KeyboardType = NumbersAndPunctuation
+      Position.X = 128.000000000000000000
+      Position.Y = 20.000000000000000000
+      HorzIncrement = 0.000000000000000000
+      VertIncrement = 0.000000000000000000
+      Size.Width = 129.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      OnChangeTracking = edtAssetChange
+      object btnAssetIn: TEditButton
+        CanFocus = False
+        Cursor = crArrow
+        Size.Width = 36.000000000000000000
+        Size.Height = 18.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        Text = 'Max'
+        OnClick = btnMaxClick
+      end
+    end
+  end
+  object rctAssetOut: TRectangle
+    Fill.Color = claWhite
+    Position.X = 83.000000000000000000
+    Position.Y = 135.000000000000000000
+    Size.Width = 277.000000000000000000
+    Size.Height = 80.000000000000000000
+    Size.PlatformDefault = False
+    Stroke.Color = claSilver
+    XRadius = 10.000000000000000000
+    YRadius = 10.000000000000000000
+    object cboAssetOut: TComboBox
+      Tag = 1
+      Position.X = 20.000000000000000000
+      Position.Y = 20.000000000000000000
+      TabOrder = 0
+      OnChange = cboAssetChange
+    end
+    object lblAssetOut: TLabel
+      Position.X = 20.000000000000000000
+      Position.Y = 50.000000000000000000
+      Size.Width = 237.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'lblAssetOut'
+      TabOrder = 2
+    end
+    object edtAssetOut: TNumberBox
+      Tag = 1
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 1
+      Cursor = crIBeam
+      ValueType = Float
+      KeyboardType = NumbersAndPunctuation
+      Position.X = 128.000000000000000000
+      Position.Y = 20.000000000000000000
+      HorzIncrement = 0.000000000000000000
+      VertIncrement = 0.000000000000000000
+      Size.Width = 129.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      OnChangeTracking = edtAssetChange
+    end
+  end
+  object btnSwap: TCornerButton
+    Position.X = 201.000000000000000000
+    Position.Y = 107.000000000000000000
+    Sides = [Top, Left, Bottom, Right]
+    Size.Width = 40.000000000000000000
+    Size.Height = 40.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 3
+    Text = #8595#8593
+    XRadius = 20.000000000000000000
+    YRadius = 20.000000000000000000
+    OnClick = btnSwapClick
+  end
+  object edtAddress: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 0
+    Position.X = 8.000000000000000000
+    Position.Y = 8.000000000000000000
+    Size.Width = 313.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TextPrompt = '0x0'
+    OnChange = edtAddressChange
+  end
+  object tmr: TTimer
+    Enabled = False
+    Interval = 500
+    OnTimer = Timer
+    Left = 11
+    Top = 48
+  end
+end
