@@ -67,6 +67,8 @@ type
     btnAssetIn: TEditButton;
     tmr: TTimer;
     edtAddress: TEdit;
+    Polygon: TListBoxItem;
+    Arbitrum: TListBoxItem;
     procedure btnTradeClick(Sender: TObject);
     procedure cboChainChange(Sender: TObject);
     procedure cboAssetChange(Sender: TObject);
@@ -289,14 +291,12 @@ begin
     Token(cbo).Balance(Self.Client, addr, procedure(qty: BigInteger; err: IError)
     begin
       if Assigned(err) then
-      begin
-        error.Show(Self.Chain, err);
-        EXIT;
-      end;
-      thread.synchronize(procedure
-      begin
-        AssetGroup(cbo).Balance := qty.AsDouble / Power(10, Token(cbo).Decimals);
-      end);
+        error.Show(Self.Chain, err)
+      else
+        thread.synchronize(procedure
+        begin
+          AssetGroup(cbo).Balance := qty.AsDouble / Power(10, Token(cbo).Decimals);
+        end);
     end);
   end);
 
@@ -401,22 +401,18 @@ begin
   Self.Address(procedure(addr: TAddress; err: IError)
   begin
     if Assigned(err) then
-    begin
-      error.show(Self.Chain, err);
-      EXIT;
-    end;
-    Token(btn).Balance(Self.Client, addr, procedure(qty: BigInteger; err: IError)
-    begin
-      if Assigned(err) then
+      error.show(Self.Chain, err)
+    else
+      Token(btn).Balance(Self.Client, addr, procedure(qty: BigInteger; err: IError)
       begin
-        error.show(Self.Chain, err);
-        EXIT;
-      end;
-      thread.synchronize(procedure
-      begin
-        AssetGroup(btn).Amount := qty.AsDouble / Power(10, Token(btn).Decimals);
+        if Assigned(err) then
+          error.show(Self.Chain, err)
+        else
+          thread.synchronize(procedure
+          begin
+            AssetGroup(btn).Amount := qty.AsDouble / Power(10, Token(btn).Decimals);
+          end);
       end);
-    end);
   end);
 end;
 
@@ -493,31 +489,29 @@ begin
   Self.Address(procedure(addr: TAddress; err: IError)
   begin
     if Assigned(err) then
-    begin
-      error.show(Self.Chain, err);
-      EXIT;
-    end;
-    web3.eth.balancer.v2.simulate(
-      Self.Client,
-      addr,
-      Self.Kind,
-      tokenIn.Address.ToChecksum,
-      tokenOut.Address.ToChecksum,
-      BigInteger.Create(amount * Power(10, Self.Token.Decimals)),
-      procedure(deltas: TArray<BigInteger>; err: IError)
-      begin
-        setOtherAmount((function: Double
+      error.show(Self.Chain, err)
+    else
+      web3.eth.balancer.v2.simulate(
+        Self.Client,
+        addr,
+        Self.Kind,
+        tokenIn.Address.ToChecksum,
+        tokenOut.Address.ToChecksum,
+        BigInteger.Create(amount * Power(10, Self.Token.Decimals)),
+        procedure(deltas: TArray<BigInteger>; err: IError)
         begin
-          if Assigned(err) then
-            Result := 0
-          else
-            if Self.Kind = GivenOut then
-              Result := deltas[0].Abs.AsDouble / Power(10, Self.Token(AssetIn).Decimals)
+          setOtherAmount((function: Double
+          begin
+            if Assigned(err) then
+              Result := 0
             else
-              Result := deltas[High(deltas)].Abs.AsDouble / Power(10, Self.Token(AssetOut).Decimals);
-        end)());
-      end
-    );
+              if Self.Kind = GivenOut then
+                Result := deltas[0].Abs.AsDouble / Power(10, Self.Token(AssetIn).Decimals)
+              else
+                Result := deltas[High(deltas)].Abs.AsDouble / Power(10, Self.Token(AssetOut).Decimals);
+          end)());
+        end
+      );
   end);
 end;
 

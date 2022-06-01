@@ -34,6 +34,16 @@ object frmMain: TfrmMain
       TabOrder = 42
       Text = 'Kovan'
     end
+    object Polygon: TListBoxItem
+      Tag = 137
+      TabOrder = 43
+      Text = 'Polygon'
+    end
+    object Arbitrum: TListBoxItem
+      Tag = 42161
+      TabOrder = 44
+      Text = 'Arbitrum'
+    end
   end
   object rctAssetIn: TRectangle
     Fill.Color = claWhite
