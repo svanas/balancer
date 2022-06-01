@@ -25,7 +25,7 @@ At the time of this writing, balancer supports the following [EVM-compatible](ht
 3. Check the box that reads `0.1 test ETH` and press the `Send Request` button
 4. Wait for your transaction to get mined. Your wallet will get credited with 0.1 ETH
 5. Navigate to https://balancer-faucet.on.fleek.co
-6. Click an whatever token you will want to trade, paste your address, enter the amount and press on the `Get Tokens` button
+6. Click an whatever token you will want to trade, paste your wallet address from MetaMask, enter the amount and press the `Get Tokens` button
 7. Wait for your transaction to get mined
 8. Repeat step 6 and 7 for the other tokens you will want to trade
 9. Launch balancer, paste your wallet address from MetaMask, select the Kovan network
