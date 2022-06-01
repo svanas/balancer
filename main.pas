@@ -20,7 +20,9 @@ uses
   web3,
   web3.eth.balancer.v2,
   web3.eth.tokenlists,
-  web3.eth.types;
+  web3.eth.types,
+  // Project
+  delay;
 
 type
   TComboBox = class(FMX.ListBox.TComboBox)
@@ -65,7 +67,6 @@ type
     Ethereum: TListBoxItem;
     Kovan: TListBoxItem;
     btnAssetIn: TEditButton;
-    tmr: TTimer;
     edtAddress: TEdit;
     Polygon: TListBoxItem;
     Arbitrum: TListBoxItem;
@@ -74,13 +75,13 @@ type
     procedure cboAssetChange(Sender: TObject);
     procedure btnMaxClick(Sender: TObject);
     procedure edtAssetChange(Sender: TObject);
-    procedure Timer(Sender: TObject);
     procedure edtAddressChange(Sender: TObject);
     procedure btnSwapClick(Sender: TObject);
   private
-    FTokens : TTokens;
-    FLockCnt: Integer;
+    FDelay  : IDelay;
     FKind   : TSwapKind;
+    FLockCnt: Integer;
+    FTokens : TTokens;
     procedure Lock;
     procedure Unlock;
     function  Locked: Boolean;
@@ -187,6 +188,8 @@ constructor TfrmMain.Create(aOwner: TComponent);
 begin
   inherited Create(aOwner);
 
+  FDelay := delay.Create;
+
   edtAssetIn.Max  := web3.Infinite.AsDouble;
   edtAssetOut.Max := web3.Infinite.AsDouble;
 
@@ -219,12 +222,11 @@ begin
     EXIT;
   if not(Sender is TControl) then
     EXIT;
-  tmr.Enabled := False;
   if TAsset(TControl(Sender).Tag) = AssetIn then
     Self.Kind := GivenIn
   else
     Self.Kind := GivenOut;
-  tmr.Enabled := True;
+  FDelay.&Set(UpdateOtherAmount, 500);
 end;
 
 procedure TfrmMain.Address(callback: TAsyncAddress);
@@ -513,12 +515,6 @@ begin
         end
       );
   end);
-end;
-
-procedure TfrmMain.Timer(Sender: TObject);
-begin
-  tmr.Enabled := False;
-  UpdateOtherAmount;
 end;
 
 procedure TfrmMain.Switch;

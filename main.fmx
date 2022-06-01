@@ -163,11 +163,4 @@ object frmMain: TfrmMain
     TextPrompt = '0x0'
     OnChange = edtAddressChange
   end
-  object tmr: TTimer
-    Enabled = False
-    Interval = 500
-    OnTimer = Timer
-    Left = 11
-    Top = 48
-  end
 end
