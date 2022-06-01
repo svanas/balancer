@@ -1,3 +1,8 @@
+[![GitHub release](https://img.shields.io/github/release/svanas/balancer)](https://github.com/svanas/balancer/releases/latest)
+[![GitHub license](https://img.shields.io/github/license/svanas/balancer)](https://github.com/svanas/balancer/blob/main/LICENSE)
+[![macOS](https://img.shields.io/badge/os-macOS-green)](https://github.com/svanas/balancer/releases/latest/download/macOS.zip)
+[![Windows](https://img.shields.io/badge/os-Windows-green)](https://github.com/svanas/balancer/releases/latest/download/Windows.zip)
+
 # balancer
 
 Look Ma! No web browser. No JavaScript. No MetaMask.
