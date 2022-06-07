@@ -1,6 +1,8 @@
 object frmMain: TfrmMain
   Left = 0
   Top = 0
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = Single
   Caption = 'Balancer'
   ClientHeight = 269
   ClientWidth = 437
@@ -139,7 +141,7 @@ object frmMain: TfrmMain
       OnChangeTracking = edtAssetChange
     end
   end
-  object btnSwap: TCornerButton
+  object btnSwitch: TCornerButton
     Position.X = 201.000000000000000000
     Position.Y = 107.000000000000000000
     Sides = [Top, Left, Bottom, Right]
@@ -150,7 +152,7 @@ object frmMain: TfrmMain
     Text = #8595#8593
     XRadius = 20.000000000000000000
     YRadius = 20.000000000000000000
-    OnClick = btnSwapClick
+    OnClick = btnSwitchClick
   end
   object edtAddress: TEdit
     Touch.InteractiveGestures = [LongTap, DoubleTap]
