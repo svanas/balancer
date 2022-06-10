@@ -70,6 +70,8 @@ type
     edtAddress: TEdit;
     Polygon: TListBoxItem;
     Arbitrum: TListBoxItem;
+    SB: TStatusBar;
+    lblStatus: TLabel;
     {----------------------------- event handlers -----------------------------}
     procedure btnTradeClick(Sender: TObject);
     procedure cboChainChange(Sender: TObject);
@@ -100,11 +102,13 @@ type
     function  GetClient: IWeb3;
     function  GetEndpoint: string;
     {-------------------------------- setters ---------------------------------}
+    procedure SetKind(Value: TSwapKind);
     procedure SetTokens(Value: TTokens);
     {-------------------------------- updaters --------------------------------}
     procedure UpdateAssets;
     procedure UpdateBalance(Sender: TControl);
     procedure UpdateOtherAmount;
+    procedure UpdateStatus;
     {---------------------------------- misc ----------------------------------}
     procedure Address(callback: TAsyncAddress);
     procedure Switch;
@@ -113,7 +117,7 @@ type
     property Chain: TChain read GetChain;
     property Client: IWeb3 read GetClient;
     property Endpoint: string read GetEndpoint;
-    property Kind: TSwapKind read FKind write FKind;
+    property Kind: TSwapKind read FKind write SetKind;
     property Tokens: TTokens read FTokens write SetTokens;
   end;
 
@@ -326,6 +330,15 @@ end;
 
 {---------------------------------- setters -----------------------------------}
 
+procedure TfrmMain.SetKind(Value: TSwapKind);
+begin
+  if Value <> FKind then
+  begin
+    FKind := Value;
+    UpdateStatus;
+  end;
+end;
+
 procedure TfrmMain.SetTokens(Value: TTokens);
 begin
   if Value <> FTokens then
@@ -374,7 +387,7 @@ begin
         else
           thread.synchronize(procedure
           begin
-            AssetGroup(Sender).Balance := qty.AsDouble / Power(10, Token(Sender).Decimals);
+            AssetGroup(Sender).Balance := web3.utils.unscale(qty, Token(Sender).Decimals);
           end);
       end);
   end);
@@ -424,7 +437,7 @@ begin
         Self.Kind,
         tokenIn.Address.ToChecksum,
         tokenOut.Address.ToChecksum,
-        BigInteger.Create(amount * Power(10, Self.Token.Decimals)),
+        web3.utils.scale(amount, Self.Token.Decimals),
         procedure(deltas: TArray<BigInteger>; err: IError)
         begin
           setOtherAmount((function: Double
@@ -433,13 +446,29 @@ begin
               Result := 0
             else
               if Self.Kind = GivenOut then
-                Result := deltas[0].Abs.AsDouble / Power(10, Self.Token(AssetIn).Decimals)
+                Result := web3.utils.unscale(deltas[0].Abs, Self.Token(AssetIn).Decimals)
               else
-                Result := deltas[High(deltas)].Abs.AsDouble / Power(10, Self.Token(AssetOut).Decimals);
+                Result := web3.utils.unscale(deltas[High(deltas)].Abs, Self.Token(AssetOut).Decimals);
           end)());
         end
       );
   end);
+end;
+
+procedure TfrmMain.UpdateStatus;
+begin
+  if Self.AssetGroup.Amount = 0 then
+    lblStatus.Text := ''
+  else
+    lblStatus.Text := Format('You are about to %s %f', [(function: string
+      begin
+        if Self.Kind = GivenIn then
+          Result := Format('send %s', [Self.Token(AssetIn).Symbol])
+        else
+          Result := Format('receive %s', [Self.Token(AssetOut).Symbol]);
+      end)(),
+      Self.AssetGroup.Amount
+    ]);
 end;
 
 {------------------------------- event handlers -------------------------------}
@@ -461,7 +490,7 @@ begin
         else
           thread.synchronize(procedure
           begin
-            AssetGroup(btn).Amount := qty.AsDouble / Power(10, Token(btn).Decimals);
+            AssetGroup(btn).Amount := web3.utils.unscale(qty, Token(btn).Decimals);
           end);
       end);
   end);
@@ -490,15 +519,20 @@ begin
         Self.Kind,
         Self.Token(AssetIn).Address.ToChecksum,
         Self.Token(AssetOut).Address.ToChecksum,
-        BigInteger.Create(Self.AssetGroup.Amount * Power(10, Self.Token.Decimals)),
+        web3.utils.scale(Self.AssetGroup.Amount, Self.Token.Decimals),
         web3.Infinite,
         procedure(rcpt: ITxReceipt; err: IError)
         begin
           if Assigned(err) then
-            error.show(Self.Chain, err)
-          else
-            // show the status of your transaction in a web browser
-            open.transaction(self.Chain, rcpt.txHash);
+          begin
+            error.show(Self.Chain, err);
+            EXIT;
+          end;
+          // show the new balance in your wallet
+          UpdateBalance(cboAssetIn);
+          UpdateBalance(cboAssetOut);
+          // show the status of your transaction in a web browser
+          open.transaction(self.Chain, rcpt.txHash);
         end);
     end;
   end);
@@ -531,6 +565,7 @@ begin
 
   UpdateBalance(cbo);
   UpdateOtherAmount;
+  UpdateStatus;
 end;
 
 procedure TfrmMain.cboChainChange(Sender: TObject);
@@ -561,6 +596,7 @@ begin
   else
     Self.Kind := GivenOut;
   FDelay.&Set(UpdateOtherAmount, 500);
+  UpdateStatus;
 end;
 
 end.

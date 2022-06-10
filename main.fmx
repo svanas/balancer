@@ -4,7 +4,7 @@ object frmMain: TfrmMain
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = Single
   Caption = 'Balancer'
-  ClientHeight = 269
+  ClientHeight = 291
   ClientWidth = 437
   FormFactor.Width = 320
   FormFactor.Height = 480
@@ -164,5 +164,21 @@ object frmMain: TfrmMain
     Size.PlatformDefault = False
     TextPrompt = '0x0'
     OnChange = edtAddressChange
+  end
+  object SB: TStatusBar
+    Position.Y = 269.000000000000000000
+    ShowSizeGrip = False
+    Size.Width = 437.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 6
+    object lblStatus: TLabel
+      Align = Client
+      Size.Width = 437.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TextSettings.HorzAlign = Center
+      TabOrder = 0
+    end
   end
 end
