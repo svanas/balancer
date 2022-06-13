@@ -1,10 +1,11 @@
 object frmMain: TfrmMain
   Left = 0
   Top = 0
+  ActiveControl = edtAddress
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = Single
   Caption = 'Balancer'
-  ClientHeight = 291
+  ClientHeight = 321
   ClientWidth = 437
   FormFactor.Width = 320
   FormFactor.Height = 480
@@ -12,7 +13,7 @@ object frmMain: TfrmMain
   DesignerMasterStyle = 0
   object btnTrade: TButton
     Position.X = 178.000000000000000000
-    Position.Y = 231.000000000000000000
+    Position.Y = 261.000000000000000000
     TabOrder = 5
     Text = 'Trade'
     OnClick = btnTradeClick
@@ -50,7 +51,7 @@ object frmMain: TfrmMain
   object rctAssetIn: TRectangle
     Fill.Color = claWhite
     Position.X = 83.000000000000000000
-    Position.Y = 46.000000000000000000
+    Position.Y = 76.000000000000000000
     Size.Width = 277.000000000000000000
     Size.Height = 80.000000000000000000
     Size.PlatformDefault = False
@@ -101,7 +102,7 @@ object frmMain: TfrmMain
   object rctAssetOut: TRectangle
     Fill.Color = claWhite
     Position.X = 83.000000000000000000
-    Position.Y = 135.000000000000000000
+    Position.Y = 165.000000000000000000
     Size.Width = 277.000000000000000000
     Size.Height = 80.000000000000000000
     Size.PlatformDefault = False
@@ -143,12 +144,13 @@ object frmMain: TfrmMain
   end
   object btnSwitch: TCornerButton
     Position.X = 201.000000000000000000
-    Position.Y = 107.000000000000000000
+    Position.Y = 137.000000000000000000
     Sides = [Top, Left, Bottom, Right]
     Size.Width = 40.000000000000000000
     Size.Height = 40.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 3
+    TabOrder = 4
+    TabStop = False
     Text = #8595#8593
     XRadius = 20.000000000000000000
     YRadius = 20.000000000000000000
@@ -166,7 +168,7 @@ object frmMain: TfrmMain
     OnChange = edtAddressChange
   end
   object SB: TStatusBar
-    Position.Y = 269.000000000000000000
+    Position.Y = 299.000000000000000000
     ShowSizeGrip = False
     Size.Width = 437.000000000000000000
     Size.Height = 22.000000000000000000
@@ -178,7 +180,47 @@ object frmMain: TfrmMain
       Size.Height = 22.000000000000000000
       Size.PlatformDefault = False
       TextSettings.HorzAlign = Center
-      TabOrder = 0
+      TabOrder = 5
+      TabStop = False
     end
+  end
+  object cboSlippage: TComboBox
+    ItemIndex = 1
+    Position.X = 329.000000000000000000
+    Position.Y = 38.000000000000000000
+    Size.Width = 100.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 3
+    object halfPercent: TListBoxItem
+      Size.Width = 19.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      Text = '0.5%'
+    end
+    object onePercent: TListBoxItem
+      IsSelected = True
+      Size.Width = 19.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      Text = '1.0%'
+    end
+    object twoPercent: TListBoxItem
+      TabOrder = 2
+      Text = '2.0%'
+    end
+  end
+  object lblSlippage: TLabel
+    Position.X = 8.000000000000000000
+    Position.Y = 41.000000000000000000
+    Size.Width = 313.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    TextSettings.HorzAlign = Trailing
+    Text = 'Slippage tolerance:'
+    TabOrder = 2
+    TabStop = False
   end
 end

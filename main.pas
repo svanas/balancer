@@ -16,6 +16,8 @@ uses
   FMX.Objects,
   FMX.StdCtrls,
   FMX.Types,
+  // Velthuis' BigNumbers
+  Velthuis.BigIntegers,
   // web3
   web3,
   web3.eth.balancer.v2,
@@ -72,6 +74,11 @@ type
     Arbitrum: TListBoxItem;
     SB: TStatusBar;
     lblStatus: TLabel;
+    cboSlippage: TComboBox;
+    lblSlippage: TLabel;
+    halfPercent: TListBoxItem;
+    onePercent: TListBoxItem;
+    twoPercent: TListBoxItem;
     {----------------------------- event handlers -----------------------------}
     procedure btnTradeClick(Sender: TObject);
     procedure cboChainChange(Sender: TObject);
@@ -101,6 +108,8 @@ type
     function  GetChain: TChain;
     function  GetClient: IWeb3;
     function  GetEndpoint: string;
+    function  GetLimit: BigInteger;
+    function  GetMultiplier: Double;
     {-------------------------------- setters ---------------------------------}
     procedure SetKind(Value: TSwapKind);
     procedure SetTokens(Value: TTokens);
@@ -130,8 +139,6 @@ uses
   // Delphi
   System.Math,
   System.SysUtils,
-  // Velthuis' BigNumbers
-  Velthuis.BigIntegers,
   // web3
   web3.eth,
   web3.eth.infura,
@@ -328,6 +335,44 @@ begin
   Result := web3.eth.infura.endpoint(Self.Chain, INFURA_PROJECT_ID);
 end;
 
+// returns the minimum or maximum amount of each token the vault is allowed to transfer
+function TfrmMain.GetLimit: BigInteger;
+begin
+  if kind = GivenIn then
+    // minimum amount of tokens to receive
+    Result := web3.utils.scale(
+      Self.AssetGroup(AssetOut).Amount * Self.GetMultiplier,
+      Self.Token(AssetOut).Decimals
+    )
+  else
+    // maximum number of tokens to send
+    Result := web3.utils.scale(
+      Self.AssetGroup(AssetIn).Amount * Self.GetMultiplier,
+      Self.Token(AssetIn).Decimals
+    );
+end;
+
+function TfrmMain.GetMultiplier: Double;
+begin
+  case cboSlippage.ItemIndex of
+    0: // 0.5%
+    if kind = GivenIn then
+      Result := 0.995
+    else
+      Result := 1.005;
+    2: // 2.0%
+    if kind = GivenIn then
+      Result := 0.98
+    else
+      Result := 1.02;
+  else // 1.0%
+    if kind = GivenIn then
+      Result := 0.99
+    else
+      Result := 1.01;
+  end;
+end;
+
 {---------------------------------- setters -----------------------------------}
 
 procedure TfrmMain.SetKind(Value: TSwapKind);
@@ -520,6 +565,7 @@ begin
         Self.Token(AssetIn).Address.ToChecksum,
         Self.Token(AssetOut).Address.ToChecksum,
         web3.utils.scale(Self.AssetGroup.Amount, Self.Token.Decimals),
+        Self.GetLimit,
         web3.Infinite,
         procedure(rcpt: ITxReceipt; err: IError)
         begin
