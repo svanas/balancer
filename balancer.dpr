@@ -7,7 +7,8 @@ uses
   thread in 'thread.pas',
   error in 'error.pas',
   open in 'open.pas',
-  prompt in 'prompt.pas';
+  prompt in 'prompt.pas',
+  delay in 'delay.pas';
 
 {$R *.res}
 

@@ -5,7 +5,7 @@ object frmMain: TfrmMain
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = Single
   Caption = 'Balancer'
-  ClientHeight = 321
+  ClientHeight = 447
   ClientWidth = 437
   FormFactor.Width = 320
   FormFactor.Height = 480
@@ -13,7 +13,7 @@ object frmMain: TfrmMain
   DesignerMasterStyle = 0
   object btnTrade: TButton
     Position.X = 178.000000000000000000
-    Position.Y = 261.000000000000000000
+    Position.Y = 253.000000000000000000
     TabOrder = 5
     Text = 'Trade'
     OnClick = btnTradeClick
@@ -77,6 +77,7 @@ object frmMain: TfrmMain
       Touch.InteractiveGestures = [LongTap, DoubleTap]
       TabOrder = 1
       Cursor = crIBeam
+      DecimalDigits = 4
       ValueType = Float
       KeyboardType = NumbersAndPunctuation
       Position.X = 128.000000000000000000
@@ -130,6 +131,7 @@ object frmMain: TfrmMain
       Touch.InteractiveGestures = [LongTap, DoubleTap]
       TabOrder = 1
       Cursor = crIBeam
+      DecimalDigits = 4
       ValueType = Float
       KeyboardType = NumbersAndPunctuation
       Position.X = 128.000000000000000000
@@ -166,23 +168,6 @@ object frmMain: TfrmMain
     Size.PlatformDefault = False
     TextPrompt = '0x0'
     OnChange = edtAddressChange
-  end
-  object SB: TStatusBar
-    Position.Y = 299.000000000000000000
-    ShowSizeGrip = False
-    Size.Width = 437.000000000000000000
-    Size.Height = 22.000000000000000000
-    Size.PlatformDefault = False
-    TabOrder = 6
-    object lblStatus: TLabel
-      Align = Client
-      Size.Width = 437.000000000000000000
-      Size.Height = 22.000000000000000000
-      Size.PlatformDefault = False
-      TextSettings.HorzAlign = Center
-      TabOrder = 5
-      TabStop = False
-    end
   end
   object cboSlippage: TComboBox
     ItemIndex = 1
@@ -222,5 +207,37 @@ object frmMain: TfrmMain
     Text = 'Slippage tolerance:'
     TabOrder = 2
     TabStop = False
+  end
+  object grdHistory: TGrid
+    CanFocus = True
+    ClipChildren = True
+    Position.X = 16.000000000000000000
+    Position.Y = 291.000000000000000000
+    Size.Width = 405.000000000000000000
+    Size.Height = 140.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 6
+    RowCount = 0
+    Options = [ColumnResize, ColLines, RowLines, RowSelect, Tabs, Header, AutoDisplacement]
+    DefaultDrawing = False
+    OnDrawColumnCell = grdHistoryDrawColumnCell
+    OnGetValue = grdHistoryGetValue
+    Viewport.Width = 401.000000000000000000
+    Viewport.Height = 115.000000000000000000
+    object colSide: TStringColumn
+      HorzAlign = Center
+      Header = 'Side'
+      Size.Width = 40.000000000000000000
+    end
+    object colSize: TFloatColumn
+      Header = 'Size'
+      DecimalDigits = 4
+    end
+    object colPrice: TCurrencyColumn
+      Header = 'Price'
+    end
+    object colBlock: TIntegerColumn
+      Header = 'Block'
+    end
   end
 end

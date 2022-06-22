@@ -1,19 +1,26 @@
-unit main;
+﻿unit main;
 
 interface
 
 uses
   // Delphi
   System.Classes,
+  System.Rtti,
+  System.Threading,
+  System.Types,
   // FireMonkey
   FMX.Controls,
   FMX.Controls.Presentation,
   FMX.Edit,
   FMX.EditBox,
   FMX.Forms,
+  FMX.Graphics,
+  FMX.Grid,
+  FMX.Grid.Style,
   FMX.ListBox,
   FMX.NumberBox,
   FMX.Objects,
+  FMX.ScrollBox,
   FMX.StdCtrls,
   FMX.Types,
   // Velthuis' BigNumbers
@@ -54,6 +61,16 @@ type
     procedure Switch(other: TAssetGroup);
   end;
 
+  TSide = (Buy, Sell);
+
+  TSwap = record
+    Side : TSide;
+    Size : Double;
+    Price: Double;
+    Block: UInt64;
+    constructor Create(aSide: TSide; aSize, aPrice: Double; aBlock: UInt64);
+  end;
+
   TfrmMain = class(TForm)
     btnTrade: TButton;
     cboChain: TComboBox;
@@ -72,13 +89,16 @@ type
     edtAddress: TEdit;
     Polygon: TListBoxItem;
     Arbitrum: TListBoxItem;
-    SB: TStatusBar;
-    lblStatus: TLabel;
     cboSlippage: TComboBox;
     lblSlippage: TLabel;
     halfPercent: TListBoxItem;
     onePercent: TListBoxItem;
     twoPercent: TListBoxItem;
+    grdHistory: TGrid;
+    colSize: TFloatColumn;
+    colPrice: TCurrencyColumn;
+    colBlock: TIntegerColumn;
+    colSide: TStringColumn;
     {----------------------------- event handlers -----------------------------}
     procedure btnTradeClick(Sender: TObject);
     procedure cboChainChange(Sender: TObject);
@@ -87,11 +107,18 @@ type
     procedure edtAssetChange(Sender: TObject);
     procedure edtAddressChange(Sender: TObject);
     procedure btnSwitchClick(Sender: TObject);
+    procedure grdHistoryGetValue(Sender: TObject; const ACol, ARow: Integer;
+      var Value: TValue);
+    procedure grdHistoryDrawColumnCell(Sender: TObject; const Canvas: TCanvas;
+      const Column: TColumn; const Bounds: TRectF; const Row: Integer;
+      const Value: TValue; const State: TGridDrawStates);
   private
+    FTasks  : TArray<ITask>;
     FDelay  : IDelay;
     FKind   : TSwapKind;
     FLockCnt: Integer;
     FTokens : TTokens;
+    FHistory: TArray<TSwap>;
     {------------------------------ Lock/UnLock -------------------------------}
     procedure Lock;
     procedure Unlock;
@@ -111,6 +138,7 @@ type
     function  GetLimit: BigInteger;
     function  GetMultiplier: Double;
     {-------------------------------- setters ---------------------------------}
+    procedure SetHistory(Value: TArray<TSwap>);
     procedure SetKind(Value: TSwapKind);
     procedure SetTokens(Value: TTokens);
     {-------------------------------- updaters --------------------------------}
@@ -120,12 +148,16 @@ type
     procedure UpdateStatus;
     {---------------------------------- misc ----------------------------------}
     procedure Address(callback: TAsyncAddress);
+    procedure Start;
+    procedure Stop;
     procedure Switch;
   public
     constructor Create(aOwner: TComponent); override;
+    function CloseQuery: Boolean; override;
     property Chain: TChain read GetChain;
     property Client: IWeb3 read GetClient;
     property Endpoint: string read GetEndpoint;
+    property History: TArray<TSwap> read FHistory write SetHistory;
     property Kind: TSwapKind read FKind write SetKind;
     property Tokens: TTokens read FTokens write SetTokens;
   end;
@@ -139,6 +171,7 @@ uses
   // Delphi
   System.Math,
   System.SysUtils,
+  System.UITypes,
   // web3
   web3.eth,
   web3.eth.infura,
@@ -173,7 +206,7 @@ end;
 
 procedure TAssetGroup.SetBalance(Value: Double);
 begin
-  Self.lbl.Text := Format('Balance: %f', [Value]);
+  Self.lbl.Text := Format('Balance: %.4f', [Value]);
 end;
 
 function TAssetGroup.GetItemIndex: Integer;
@@ -202,6 +235,16 @@ begin
   Self.lbl.Text := S;
 end;
 
+{----------------------------------- TSwap ------------------------------------}
+
+constructor TSwap.Create(aSide: TSide; aSize, aPrice: Double; aBlock: UInt64);
+begin
+  Self.Side  := aSide;
+  Self.Size  := aSize;
+  Self.Price := aPrice;
+  Self.Block := aBlock;
+end;
+
 {--------------------------------- TfrmMain -----------------------------------}
 
 constructor TfrmMain.Create(aOwner: TComponent);
@@ -216,12 +259,57 @@ begin
   cboChainChange(cboChain);
 end;
 
+function TfrmMain.CloseQuery: Boolean;
+begin
+  Result := inherited CloseQuery;
+  if Result then
+    Self.Stop;
+end;
+
 procedure TfrmMain.Address(callback: TAsyncAddress);
 begin
   if edtAddress.Text.Length = 0 then
     callback(EMPTY_ADDRESS, nil)
   else
     TAddress.New(Self.Client, edtAddress.Text, callback);
+end;
+
+// start listening to staps between two tokens
+procedure TfrmMain.Start;
+begin
+  Self.Stop;
+
+  Self.History := [];
+
+  const task = web3.eth.balancer.v2.listen(
+    Self.Client,
+    procedure(blockNo: BigInteger; poolId: TBytes32; tokenIn, tokenOut: TAddress; amountIn, amountOut: BigInteger)
+    begin
+      if tokenIn.SameAs(Self.Token(AssetOut).Address) and tokenOut.SameAs(Self.Token(AssetIn).Address) then
+      begin
+        const size = unscale(amountOut, Self.Token(assetIn).Decimals);
+        Self.History := [TSwap.Create(Buy, size,
+          unscale(AmountIn, Self.Token(assetOut).Decimals) / size, blockNo.AsUInt64)] + Self.History;
+      end
+      else
+        if tokenIn.SameAs(Self.Token(AssetIn).Address) and tokenOut.SameAs(Self.Token(AssetOut).Address) then
+        begin
+          const size = unscale(amountIn, Self.Token(assetIn).Decimals);
+          Self.History := [TSwap.Create(Sell, size,
+            unscale(AmountOut, Self.Token(assetOut).Decimals) / size, blockNo.AsUInt64)] + Self.History;
+        end;
+    end);
+
+  Self.FTasks := Self.FTasks + [task];
+  task.Start;
+end;
+
+// stop listening to swaps
+procedure TfrmMain.Stop;
+begin
+  for var task in Self.FTasks do
+    if task.Status = TTaskStatus.Running then
+      task.Cancel;
 end;
 
 procedure TfrmMain.Switch;
@@ -375,6 +463,17 @@ end;
 
 {---------------------------------- setters -----------------------------------}
 
+procedure TfrmMain.SetHistory(Value: TArray<TSwap>);
+begin
+  Self.FHistory := Value;
+  thread.synchronize(procedure
+  begin
+    Self.grdHistory.RowCount := 0;
+    Self.grdHistory.RowCount := Length(Self.History);
+    Self.Invalidate;
+  end);
+end;
+
 procedure TfrmMain.SetKind(Value: TSwapKind);
 begin
   if Value <> FKind then
@@ -502,18 +601,21 @@ end;
 
 procedure TfrmMain.UpdateStatus;
 begin
-  if Self.AssetGroup.Amount = 0 then
-    lblStatus.Text := ''
-  else
-    lblStatus.Text := Format('You are about to %s %f', [(function: string
-      begin
-        if Self.Kind = GivenIn then
-          Result := Format('send %s', [Self.Token(AssetIn).Symbol])
-        else
-          Result := Format('receive %s', [Self.Token(AssetOut).Symbol]);
-      end)(),
-      Self.AssetGroup.Amount
-    ]);
+  thread.synchronize(procedure
+  begin
+    if Self.AssetGroup.Amount = 0 then
+      Self.Caption := 'Balancer'
+    else
+      Self.Caption := Format('You are about to %s %.4f', [(function: string
+        begin
+          if Self.Kind = GivenIn then
+            Result := Format('send %s', [Self.Token(AssetIn).Symbol])
+          else
+            Result := Format('receive %s', [Self.Token(AssetOut).Symbol]);
+        end)(),
+        Self.AssetGroup.Amount
+      ]);
+  end);
 end;
 
 {------------------------------- event handlers -------------------------------}
@@ -612,6 +714,7 @@ begin
   UpdateBalance(cbo);
   UpdateOtherAmount;
   UpdateStatus;
+  Start;
 end;
 
 procedure TfrmMain.cboChainChange(Sender: TObject);
@@ -643,6 +746,43 @@ begin
     Self.Kind := GivenOut;
   FDelay.&Set(UpdateOtherAmount, 500);
   UpdateStatus;
+end;
+
+procedure TfrmMain.grdHistoryGetValue(Sender: TObject; const ACol,
+  ARow: Integer; var Value: TValue);
+begin
+  case ACol of
+    0: if History[ARow].Side = Buy then
+         Value := '↗'
+       else
+         Value := '↘';
+    1: Value := History[ARow].Size;
+    2: Value := History[ARow].Price;
+    3: Value := History[ARow].Block;
+  end;
+end;
+
+procedure TfrmMain.grdHistoryDrawColumnCell(Sender: TObject;
+  const Canvas: TCanvas; const Column: TColumn; const Bounds: TRectF;
+  const Row: Integer; const Value: TValue; const State: TGridDrawStates);
+begin
+  const S = (function: string
+  begin
+    Result := '';
+    if not Value.IsEmpty then
+      if (Column = colSide) or (Column = colPrice) then
+        Result := Column.ValueToString(Value);
+  end)();
+  if S <> '' then
+  begin
+    if History[Row].Side = Buy then
+      Canvas.Fill.Color := TAlphaColors.Green
+    else
+      Canvas.Fill.Color := TAlphaColors.Red;
+    Canvas.FillText(Bounds, S, False, 1, [], Column.HorzAlign, TTextAlign.Center);
+    EXIT;
+  end;
+  Column.DefaultDrawCell(Canvas, Bounds, Row, Value, State);
 end;
 
 end.
