@@ -6,7 +6,6 @@ uses
   // Delphi
   System.Classes,
   System.Rtti,
-  System.Threading,
   System.Types,
   // FireMonkey
   FMX.Controls,
@@ -28,6 +27,7 @@ uses
   // web3
   web3,
   web3.eth.balancer.v2,
+  web3.eth.logs,
   web3.eth.tokenlists,
   web3.eth.types,
   // Project
@@ -113,7 +113,7 @@ type
       const Column: TColumn; const Bounds: TRectF; const Row: Integer;
       const Value: TValue; const State: TGridDrawStates);
   private
-    FTasks  : TArray<ITask>;
+    FLoggers: TArray<ILogger>;
     FDelay  : IDelay;
     FKind   : TSwapKind;
     FLockCnt: Integer;
@@ -149,7 +149,7 @@ type
     {---------------------------------- misc ----------------------------------}
     procedure Address(callback: TAsyncAddress);
     procedure Start;
-    procedure Stop;
+    procedure Stop(wait: Boolean);
     procedure Switch;
   public
     constructor Create(aOwner: TComponent); override;
@@ -263,7 +263,7 @@ function TfrmMain.CloseQuery: Boolean;
 begin
   Result := inherited CloseQuery;
   if Result then
-    Self.Stop;
+    Self.Stop(True);
 end;
 
 procedure TfrmMain.Address(callback: TAsyncAddress);
@@ -277,11 +277,11 @@ end;
 // start listening to staps between two tokens
 procedure TfrmMain.Start;
 begin
-  Self.Stop;
+  Self.Stop(False);
 
   Self.History := [];
 
-  const task = web3.eth.balancer.v2.listen(
+  const logger = web3.eth.balancer.v2.listen(
     Self.Client,
     procedure(blockNo: BigInteger; poolId: TBytes32; tokenIn, tokenOut: TAddress; amountIn, amountOut: BigInteger)
     begin
@@ -300,16 +300,20 @@ begin
         end;
     end);
 
-  Self.FTasks := Self.FTasks + [task];
-  task.Start;
+  Self.FLoggers := Self.FLoggers + [logger];
+  logger.Start;
 end;
 
 // stop listening to swaps
-procedure TfrmMain.Stop;
+procedure TfrmMain.Stop(wait: Boolean);
 begin
-  for var task in Self.FTasks do
-    if task.Status = TTaskStatus.Running then
-      task.Cancel;
+  for var logger in Self.FLoggers do
+    if logger.Status in [Running, Paused] then
+    begin
+      logger.Stop;
+      if wait then
+        logger.Wait;
+    end;
 end;
 
 procedure TfrmMain.Switch;
