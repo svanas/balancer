@@ -7,9 +7,17 @@
 
 Look Ma! No web browser. No JavaScript. No MetaMask.
 
+## reason to be
+
+This dapp is an implementation of the https://balancer.finance protocol in native code, made possible by [a grant](https://twitter.com/BalancerGrants/status/1501558781330993153) from the [Balancer DAO](http://grants.balancer.community/).
+
+## downloads
+
+You can download this dapp for [Windows](https://github.com/svanas/balancer/releases/latest/download/Windows.zip) and [macOS](https://github.com/svanas/balancer/releases/latest/download/macOS.zip).
+
 ## networks
 
-At the time of this writing, balancer supports the following [EVM-compatible](https://chainlist.org) networks:
+At the time of this writing, this dapp supports the following [EVM-compatible](https://chainlist.org) networks:
 * [Ethereum](https://ethereum.org)
 * [Kovan](https://kovan.etherscan.io)
 * [Polygon](https://polygon.technology)
