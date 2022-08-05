@@ -19,7 +19,7 @@ You can download this dapp for [Windows](https://github.com/svanas/balancer/rele
 
 At the time of this writing, this dapp supports the following [EVM-compatible](https://chainlist.org) networks:
 * [Ethereum](https://ethereum.org)
-* [Kovan](https://kovan.etherscan.io)
+* [Goerli](https://goerli.etherscan.io)
 * [Polygon](https://polygon.technology)
 * [Arbitrum](https://arbitrum.io)
 
@@ -33,15 +33,15 @@ At the time of this writing, this dapp supports the following [EVM-compatible](h
 
 ## testing
 
-1. Switch your MetaMask to the [Kovan](https://kovan.etherscan.io) test network
-2. Navigate to https://faucets.chain.link
-3. Check the box that reads `0.1 test ETH` and press the `Send Request` button
-4. Wait for your transaction to get mined. Your wallet will get credited with 0.1 ETH
-5. Navigate to https://balancer-faucet.on.fleek.co
-6. Click an whatever token you will want to trade, paste your wallet address from MetaMask, enter the amount and press the `Get Tokens` button
+1. Switch your MetaMask to the [Goerli](https://goerli.etherscan.io) test network
+2. Navigate to https://goerlifaucet.com
+3. Paste your wallet address and press the `Send Me ETH` button
+4. Wait for your transaction to get mined. Your wallet will get credited with 0.25 ETH
+5. Navigate to https://goerli.balancer.fi/#/faucet
+6. Pick whatever token you will want to trade and press the `Drip` button
 7. Wait for your transaction to get mined
 8. Repeat step 6 and 7 for the other tokens you will want to trade
-9. Launch balancer, paste your wallet address from MetaMask, select the Kovan network
+9. Launch balancer, paste your wallet address from MetaMask, select the Goerli network
 
 ## disclaimer
 
