@@ -13,6 +13,7 @@ implementation
 
 uses
   // Delphi
+  System.Classes,
   System.SysUtils,
   System.UITypes,
   // FireMonkey

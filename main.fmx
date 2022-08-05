@@ -29,13 +29,13 @@ object frmMain: TfrmMain
       TabOrder = 41
       Text = 'Ethereum'
     end
-    object Kovan: TListBoxItem
-      Tag = 42
+    object Goerli: TListBoxItem
+      Tag = 5
       Size.Width = 19.000000000000000000
       Size.Height = 19.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 42
-      Text = 'Kovan'
+      Text = 'Goerli'
     end
     object Polygon: TListBoxItem
       Tag = 137

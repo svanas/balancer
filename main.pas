@@ -84,7 +84,7 @@ type
     btnSwitch: TCornerButton;
     edtAssetOut: TNumberBox;
     Ethereum: TListBoxItem;
-    Kovan: TListBoxItem;
+    Goerli: TListBoxItem;
     btnAssetIn: TEditButton;
     edtAddress: TEdit;
     Polygon: TListBoxItem;
