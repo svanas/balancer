@@ -6,8 +6,10 @@ uses
   // Delphi
   System.Classes,
   System.Rtti,
+  System.SysUtils,
   System.Types,
   // FireMonkey
+  FMX.BehaviorManager,
   FMX.Controls,
   FMX.Controls.Presentation,
   FMX.Edit,
@@ -147,7 +149,7 @@ type
     procedure UpdateOtherAmount;
     procedure UpdateStatus;
     {---------------------------------- misc ----------------------------------}
-    procedure Address(callback: TAsyncAddress);
+    procedure Address(callback: TProc<TAddress, IError>);
     procedure Start;
     procedure Stop(wait: Boolean);
     procedure Switch;
@@ -170,7 +172,6 @@ implementation
 uses
   // Delphi
   System.Math,
-  System.SysUtils,
   System.UITypes,
   // web3
   web3.eth,
@@ -256,6 +257,7 @@ begin
   edtAssetIn.Max  := web3.Infinite.AsDouble;
   edtAssetOut.Max := web3.Infinite.AsDouble;
 
+  grdHistory.AutoHide := TBehaviorBoolean.False;
   cboChainChange(cboChain);
 end;
 
@@ -266,7 +268,7 @@ begin
     Self.Stop(True);
 end;
 
-procedure TfrmMain.Address(callback: TAsyncAddress);
+procedure TfrmMain.Address(callback: TProc<TAddress, IError>);
 begin
   if edtAddress.Text.Length = 0 then
     callback(EMPTY_ADDRESS, nil)
@@ -424,7 +426,7 @@ end;
 
 function TfrmMain.GetEndpoint: string;
 begin
-  Result := web3.eth.infura.endpoint(Self.Chain, INFURA_PROJECT_ID);
+  Result := web3.eth.infura.endpoint(Self.Chain, INFURA_PROJECT_ID).Value;
 end;
 
 // returns the minimum or maximum amount of each token the vault is allowed to transfer
@@ -654,39 +656,46 @@ end;
 
 procedure TfrmMain.btnTradeClick(Sender: TObject);
 begin
-  Self.Address(procedure(addr: TAddress; err: IError)
+  Self.Address(procedure(&public: TAddress; err: IError)
   begin
     if Assigned(err) then
     begin
       error.show(Self.Chain, err);
       EXIT;
     end;
-    const &private = prompt.privateKey(addr);
-    if &private <> '' then
+
+    const &private = prompt.privateKey(&public);
+    if &private.IsErr then
     begin
-      web3.eth.balancer.v2.swap(
-        Self.Client,
-        &private,
-        Self.Kind,
-        Self.Token(AssetIn).Address.ToChecksum,
-        Self.Token(AssetOut).Address.ToChecksum,
-        web3.utils.scale(Self.AssetGroup.Amount, Self.Token.Decimals),
-        Self.GetLimit,
-        web3.Infinite,
-        procedure(rcpt: ITxReceipt; err: IError)
-        begin
-          if Assigned(err) then
-          begin
-            error.show(Self.Chain, err);
-            EXIT;
-          end;
-          // show the new balance in your wallet
-          UpdateBalance(cboAssetIn);
-          UpdateBalance(cboAssetOut);
-          // show the status of your transaction in a web browser
-          open.transaction(self.Chain, rcpt.txHash);
-        end);
+      if Supports(&private.Error, ICancelled) then
+        { nothing }
+      else
+        error.show(Self.Chain, &private.Error);
+      EXIT;
     end;
+
+    web3.eth.balancer.v2.swap(
+      Self.Client,
+      &private.Value,
+      Self.Kind,
+      Self.Token(AssetIn).Address.ToChecksum,
+      Self.Token(AssetOut).Address.ToChecksum,
+      web3.utils.scale(Self.AssetGroup.Amount, Self.Token.Decimals),
+      Self.GetLimit,
+      web3.Infinite,
+      procedure(rcpt: ITxReceipt; err: IError)
+      begin
+        if Assigned(err) then
+        begin
+          error.show(Self.Chain, err);
+          EXIT;
+        end;
+        // show the new balance in your wallet
+        UpdateBalance(cboAssetIn);
+        UpdateBalance(cboAssetOut);
+        // show the status of your transaction in a web browser
+        open.transaction(self.Chain, rcpt.txHash);
+      end);
   end);
 end;
 

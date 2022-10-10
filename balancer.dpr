@@ -4,11 +4,11 @@ uses
   System.StartUpCopy,
   FMX.Forms,
   main in 'main.pas' {frmMain},
-  thread in 'thread.pas',
+  delay in 'delay.pas',
   error in 'error.pas',
   open in 'open.pas',
   prompt in 'prompt.pas',
-  delay in 'delay.pas';
+  thread in 'thread.pas';
 
 {$R *.res}
 

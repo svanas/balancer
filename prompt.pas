@@ -6,7 +6,16 @@ uses
   // web3
   web3;
 
-function privateKey(&public: TAddress): TPrivateKey;
+type
+  ICancelled = interface(IError)
+  ['{EB6305B0-A310-43ED-A868-8BCB3334B11F}']
+  end;
+  TCancelled = class(TError, ICancelled)
+  public
+    constructor Create;
+  end;
+
+function privateKey(&public: TAddress): IResult<TPrivateKey>;
 
 implementation
 
@@ -22,12 +31,13 @@ uses
   error,
   thread;
 
-function privateKey(&public: TAddress): TPrivateKey;
-resourcestring
-  RS_PRIVATE_KEY_IS_INVALID = 'Private key is invalid.';
+constructor TCancelled.Create;
 begin
-  Result := '';
+  inherited Create('');
+end;
 
+function privateKey(&public: TAddress): IResult<TPrivateKey>;
+begin
   var &private: TPrivateKey;
   thread.synchronize(procedure
   begin
@@ -35,31 +45,33 @@ begin
   end);
 
   if &private = '' then
+  begin
+    Result := TResult<TPrivateKey>.Err('', TCancelled.Create);
     EXIT;
+  end;
+
   if (
     (not web3.utils.isHex('', string(&private)))
   or
     (Length(&private) <> SizeOf(TPrivateKey) - 1)) then
   begin
-    error.show(RS_PRIVATE_KEY_IS_INVALID);
+    Result := TResult<TPrivateKey>.Err('', 'Private key is invalid');
     EXIT;
   end;
 
-  &private.Address(procedure(addr: TAddress; err: IError)
+  const address = &private.GetAddress;
+  if address.IsErr then
   begin
-    if Assigned(err) then
-    begin
-      error.show(err.Message);
-      &private := '';
-    end;
-    if string(addr).ToUpper <> string(&public).ToUpper then
-    begin
-      error.show(RS_PRIVATE_KEY_IS_INVALID);
-      &private := '';
-    end;
-  end);
+    Result := TResult<TPrivateKey>.Err('', address.Error);
+    EXIT;
+  end;
+  if address.Value.ToChecksum <> &public.ToChecksum then
+  begin
+    Result := TResult<TPrivateKey>.Err('', 'Private key is invalid');
+    EXIT;
+  end;
 
-  Result := &private;
+  Result := TResult<TPrivateKey>.Ok(&private);
 end;
 
 end.
