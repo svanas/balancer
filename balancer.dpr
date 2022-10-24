@@ -6,7 +6,6 @@ uses
   main in 'main.pas' {frmMain},
   delay in 'delay.pas',
   error in 'error.pas',
-  open in 'open.pas',
   prompt in 'prompt.pas',
   thread in 'thread.pas';
 

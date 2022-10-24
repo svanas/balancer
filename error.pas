@@ -21,7 +21,6 @@ uses
   // web3
   web3.eth.tx,
   // Project
-  open,
   thread;
 
 procedure show(const msg: string);
@@ -49,7 +48,7 @@ begin
         ),
         TMsgDlgType.mtError, [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo], 0
       ) = mrYes then
-        open.transaction(chain, txError.Hash);
+        openTransaction(chain, txError.Hash);
       EXIT;
     end;
     MessageDlg(err.Message, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);

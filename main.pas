@@ -180,7 +180,6 @@ uses
   web3.utils,
   // Project
   error,
-  open,
   prompt,
   thread;
 
@@ -410,12 +409,14 @@ function TfrmMain.GetChain: TChain;
 begin
   const I = cboChain.ItemIndex;
   if (I > -1) and (I < cboChain.Count) then
-    for var C := System.Low(TChain) to System.High(TChain) do
-      if C.Id = cboChain.ListItems[I].Tag then
-      begin
-        Result := C;
-        EXIT;
-      end;
+  begin
+    const chain = web3.Chain(cboChain.ListItems[I].Tag);
+    if chain.IsOk then
+    begin
+      Result := chain.Value^;
+      EXIT;
+    end;
+  end;
   Result := web3.Ethereum;
 end;
 
@@ -694,7 +695,7 @@ begin
         UpdateBalance(cboAssetIn);
         UpdateBalance(cboAssetOut);
         // show the status of your transaction in a web browser
-        open.transaction(self.Chain, rcpt.txHash);
+        openTransaction(self.Chain, rcpt.txHash);
       end);
   end);
 end;
