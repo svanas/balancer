@@ -422,7 +422,7 @@ end;
 
 function TfrmMain.GetClient: IWeb3;
 begin
-  Result := TWeb3.Create(Self.Chain, Self.Endpoint);
+  Result := TWeb3.Create(Self.Chain.SetGateway(HTTPS, Self.Endpoint));
 end;
 
 function TfrmMain.GetEndpoint: string;
