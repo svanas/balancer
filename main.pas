@@ -174,12 +174,12 @@ uses
   System.Math,
   System.UITypes,
   // web3
+  web3.error,
   web3.eth,
   web3.eth.infura,
   web3.eth.tx,
   web3.utils,
   // Project
-  error,
   prompt,
   thread;
 
@@ -529,12 +529,12 @@ begin
   Self.Address(procedure(addr: TAddress; err: IError)
   begin
     if Assigned(err) then
-      error.show(Self.Chain, err)
+      web3.error.show(Self.Chain, err)
     else
       Token(Sender).Balance(Self.Client, addr, procedure(qty: BigInteger; err: IError)
       begin
         if Assigned(err) then
-          error.Show(Self.Chain, err)
+          web3.error.Show(Self.Chain, err)
         else
           thread.synchronize(procedure
           begin
@@ -580,7 +580,7 @@ begin
   Self.Address(procedure(addr: TAddress; err: IError)
   begin
     if Assigned(err) then
-      error.show(Self.Chain, err)
+      web3.error.show(Self.Chain, err)
     else
       web3.eth.balancer.v2.simulate(
         Self.Client,
@@ -635,12 +635,12 @@ begin
   Self.Address(procedure(addr: TAddress; err: IError)
   begin
     if Assigned(err) then
-      error.show(Self.Chain, err)
+      web3.error.show(Self.Chain, err)
     else
       Token(btn).Balance(Self.Client, addr, procedure(qty: BigInteger; err: IError)
       begin
         if Assigned(err) then
-          error.show(Self.Chain, err)
+          web3.error.show(Self.Chain, err)
         else
           thread.synchronize(procedure
           begin
@@ -661,7 +661,7 @@ begin
   begin
     if Assigned(err) then
     begin
-      error.show(Self.Chain, err);
+      web3.error.show(Self.Chain, err);
       EXIT;
     end;
 
@@ -671,7 +671,7 @@ begin
       if Supports(&private.Error, ICancelled) then
         { nothing }
       else
-        error.show(Self.Chain, &private.Error);
+        web3.error.show(Self.Chain, &private.Error);
       EXIT;
     end;
 
@@ -688,7 +688,7 @@ begin
       begin
         if Assigned(err) then
         begin
-          error.show(Self.Chain, err);
+          web3.error.show(Self.Chain, err);
           EXIT;
         end;
         // show the new balance in your wallet
@@ -736,7 +736,7 @@ begin
   web3.eth.balancer.v2.tokens(Self.Chain, procedure(tokens: TTokens; err: IError)
   begin
     if Assigned(err) then
-      error.show(Self.Chain, err)
+      web3.error.show(Self.Chain, err)
     else
       Self.Tokens := tokens;
   end);

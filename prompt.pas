@@ -6,15 +6,6 @@ uses
   // web3
   web3;
 
-type
-  ICancelled = interface(IError)
-  ['{EB6305B0-A310-43ED-A868-8BCB3334B11F}']
-  end;
-  TCancelled = class(TError, ICancelled)
-  public
-    constructor Create;
-  end;
-
 function privateKey(&public: TAddress): IResult<TPrivateKey>;
 
 implementation
@@ -25,16 +16,11 @@ uses
   // FireMonkey
   FMX.Dialogs,
   // web3
+  web3.error,
   web3.eth.types,
   web3.utils,
   // Project
-  error,
   thread;
-
-constructor TCancelled.Create;
-begin
-  inherited Create('');
-end;
 
 function privateKey(&public: TAddress): IResult<TPrivateKey>;
 begin
