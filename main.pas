@@ -180,7 +180,6 @@ uses
   web3.eth.tx,
   web3.utils,
   // Project
-  prompt,
   thread;
 
 {$I infura.api.key}
@@ -665,7 +664,7 @@ begin
       EXIT;
     end;
 
-    const &private = prompt.privateKey(&public);
+    const &private = TPrivateKey.Prompt(&public);
     if &private.IsErr then
     begin
       if Supports(&private.Error, ICancelled) then

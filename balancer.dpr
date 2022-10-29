@@ -5,7 +5,6 @@ uses
   FMX.Forms,
   main in 'main.pas' {frmMain},
   delay in 'delay.pas',
-  prompt in 'prompt.pas',
   thread in 'thread.pas';
 
 {$R *.res}
