@@ -271,7 +271,7 @@ begin
   if edtAddress.Text.Length = 0 then
     callback(EMPTY_ADDRESS, nil)
   else
-    TAddress.New(Self.Client, edtAddress.Text, callback);
+    TAddress.Create(Self.Client, edtAddress.Text, callback);
 end;
 
 // start listening to staps between two tokens
