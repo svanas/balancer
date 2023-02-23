@@ -410,7 +410,7 @@ begin
   if (I > -1) and (I < cboChain.Count) then
   begin
     const chain = web3.Chain(cboChain.ListItems[I].Tag);
-    if chain.IsOk then
+    if chain.isOk then
     begin
       Result := chain.Value^;
       EXIT;
@@ -665,7 +665,7 @@ begin
     end;
 
     const &private = TPrivateKey.Prompt(&public);
-    if &private.IsErr then
+    if &private.isErr then
     begin
       if Supports(&private.Error, ICancelled) then
         { nothing }
