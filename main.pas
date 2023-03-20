@@ -101,6 +101,7 @@ type
     colPrice: TCurrencyColumn;
     colBlock: TIntegerColumn;
     colSide: TStringColumn;
+    Gnosis: TListBoxItem;
     {----------------------------- event handlers -----------------------------}
     procedure btnTradeClick(Sender: TObject);
     procedure cboChainChange(Sender: TObject);

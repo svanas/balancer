@@ -47,6 +47,11 @@ object frmMain: TfrmMain
       TabOrder = 44
       Text = 'Arbitrum'
     end
+    object Gnosis: TListBoxItem
+      Tag = 100
+      TabOrder = 45
+      Text = 'Gnosis'
+    end
   end
   object rctAssetIn: TRectangle
     Fill.Color = claWhite
