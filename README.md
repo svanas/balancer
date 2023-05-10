@@ -35,9 +35,9 @@ At the time of this writing, this dapp supports the following [EVM-compatible](h
 ## testing
 
 1. Switch your MetaMask to the [Goerli](https://goerli.etherscan.io) test network
-2. Navigate to https://goerlifaucet.com
+2. Navigate to https://goerlifaucet.com or https://bigoerlifaucet.com
 3. Paste your wallet address and press the `Send Me ETH` button
-4. Wait for your transaction to get mined. Your wallet will get credited with 0.1 ETH
+4. Wait for your transaction to get mined. Your wallet will get credited with 0.02 ETH
 5. Navigate to https://app.balancer.fi/#/goerli/faucet
 6. Pick whatever token you will want to trade and press the `Drip` button
 7. Wait for your transaction to get mined
