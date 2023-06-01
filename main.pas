@@ -270,9 +270,9 @@ end;
 procedure TfrmMain.Address(callback: TProc<TAddress, IError>);
 begin
   if edtAddress.Text.Length = 0 then
-    callback(EMPTY_ADDRESS, nil)
+    callback(TAddress.Zero, nil)
   else
-    TAddress.Create(Self.Client, edtAddress.Text, callback);
+    TAddress.FromName(Self.Client, edtAddress.Text, callback);
 end;
 
 // start listening to staps between two tokens
