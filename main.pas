@@ -85,12 +85,8 @@ type
     edtAssetIn: TNumberBox;
     btnSwitch: TCornerButton;
     edtAssetOut: TNumberBox;
-    Ethereum: TListBoxItem;
-    Goerli: TListBoxItem;
     btnAssetIn: TEditButton;
     edtAddress: TEdit;
-    Polygon: TListBoxItem;
-    Arbitrum: TListBoxItem;
     cboSlippage: TComboBox;
     lblSlippage: TLabel;
     halfPercent: TListBoxItem;
@@ -101,7 +97,14 @@ type
     colPrice: TCurrencyColumn;
     colBlock: TIntegerColumn;
     colSide: TStringColumn;
+    {--------------------------------- chains ---------------------------------}
+    Ethereum: TListBoxItem;
+    Sepolia: TListBoxItem;
+    Optimism: TListBoxItem;
     Gnosis: TListBoxItem;
+    Polygon: TListBoxItem;
+    Base: TListBoxItem;
+    Arbitrum: TListBoxItem;
     {----------------------------- event handlers -----------------------------}
     procedure btnTradeClick(Sender: TObject);
     procedure cboChainChange(Sender: TObject);

@@ -14,7 +14,7 @@ object frmMain: TfrmMain
   object btnTrade: TButton
     Position.X = 178.000000000000000000
     Position.Y = 253.000000000000000000
-    TabOrder = 5
+    TabOrder = 4
     Text = 'Trade'
     OnClick = btnTradeClick
   end
@@ -26,31 +26,41 @@ object frmMain: TfrmMain
     OnChange = cboChainChange
     object Ethereum: TListBoxItem
       Tag = 1
-      TabOrder = 41
+      TabOrder = 0
       Text = 'Ethereum'
     end
-    object Goerli: TListBoxItem
-      Tag = 5
+    object Sepolia: TListBoxItem
+      Tag = 11155111
       Size.Width = 19.000000000000000000
       Size.Height = 19.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 42
-      Text = 'Goerli'
+      TabOrder = 1
+      Text = 'Sepolia'
     end
-    object Polygon: TListBoxItem
-      Tag = 137
-      TabOrder = 43
-      Text = 'Polygon'
-    end
-    object Arbitrum: TListBoxItem
-      Tag = 42161
-      TabOrder = 44
-      Text = 'Arbitrum'
+    object Optimism: TListBoxItem
+      Tag = 10
+      TabOrder = 2
+      Text = 'Optimism'
     end
     object Gnosis: TListBoxItem
       Tag = 100
-      TabOrder = 45
+      TabOrder = 3
       Text = 'Gnosis'
+    end
+    object Polygon: TListBoxItem
+      Tag = 137
+      TabOrder = 4
+      Text = 'Polygon'
+    end
+    object Base: TListBoxItem
+      Tag = 8453
+      TabOrder = 5
+      Text = 'Base'
+    end
+    object Arbitrum: TListBoxItem
+      Tag = 42161
+      TabOrder = 6
+      Text = 'Arbitrum'
     end
   end
   object rctAssetIn: TRectangle
@@ -76,7 +86,6 @@ object frmMain: TfrmMain
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = 'lblAssetIn'
-      TabOrder = 2
     end
     object edtAssetIn: TNumberBox
       Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -129,7 +138,6 @@ object frmMain: TfrmMain
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = 'lblAssetOut'
-      TabOrder = 2
     end
     object edtAssetOut: TNumberBox
       Tag = 1
@@ -156,7 +164,7 @@ object frmMain: TfrmMain
     Size.Width = 40.000000000000000000
     Size.Height = 40.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 4
+    TabOrder = 3
     TabStop = False
     Text = #8595#8593
     XRadius = 20.000000000000000000
@@ -181,11 +189,8 @@ object frmMain: TfrmMain
     Size.Width = 100.000000000000000000
     Size.Height = 22.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 3
+    TabOrder = 2
     object halfPercent: TListBoxItem
-      Size.Width = 19.000000000000000000
-      Size.Height = 19.000000000000000000
-      Size.PlatformDefault = False
       TabOrder = 0
       Text = '0.5%'
     end
@@ -210,7 +215,6 @@ object frmMain: TfrmMain
     Size.PlatformDefault = False
     TextSettings.HorzAlign = Trailing
     Text = 'Slippage tolerance:'
-    TabOrder = 2
     TabStop = False
   end
   object grdHistory: TGrid
@@ -221,7 +225,6 @@ object frmMain: TfrmMain
     Size.Width = 405.000000000000000000
     Size.Height = 140.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 6
     RowCount = 0
     Options = [ColumnResize, ColLines, RowLines, RowSelect, Tabs, Header, AutoDisplacement]
     DefaultDrawing = False
