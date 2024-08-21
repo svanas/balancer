@@ -9,7 +9,7 @@ Look Ma! No web browser. No JavaScript. No MetaMask.
 
 ## reason to be
 
-This dapp is an implementation of the https://balancer.finance protocol in native code, made possible by [an awesome grant](https://twitter.com/BalancerGrants/status/1501558781330993153) from the [Balancer DAO](http://grants.balancer.community/).
+This dapp is an implementation of the https://balancer.fi protocol in native code, made possible by [an awesome grant](https://twitter.com/BalancerGrants/status/1501558781330993153) from the [Balancer DAO](http://grants.balancer.community/).
 
 ## downloads
 
@@ -19,10 +19,12 @@ You can download this dapp for [Windows](https://github.com/svanas/balancer/rele
 
 At the time of this writing, this dapp supports the following [EVM-compatible](https://chainlist.org) networks:
 * [Ethereum](https://ethereum.org)
-* [Goerli](https://goerli.etherscan.io)
-* [Polygon](https://polygon.technology)
-* [Arbitrum](https://arbitrum.io)
+* [Sepolia](https://sepolia.etherscan.io)
+* [Optimism](https://www.optimism.io)
 * [Gnosis Chain](https://www.gnosischain.com)
+* [Polygon](https://polygon.technology)
+* [Base](https://base.org)
+* [Arbitrum](https://arbitrum.io)
 
 ## compiling
 
@@ -34,15 +36,15 @@ At the time of this writing, this dapp supports the following [EVM-compatible](h
 
 ## testing
 
-1. Switch your MetaMask to the [Goerli](https://goerli.etherscan.io) test network
-2. Navigate to https://goerlifaucet.com or https://bigoerlifaucet.com
+1. Switch your MetaMask to the [Sepolia](https://sepolia.etherscan.io) test network
+2. Navigate to https://sepoliafaucet.com
 3. Paste your wallet address and press the `Send Me ETH` button
-4. Wait for your transaction to get mined. Your wallet will get credited with 0.02 ETH
-5. Navigate to https://app.balancer.fi/#/goerli/faucet
+4. Wait for your transaction to get mined. Your wallet will get credited with 0.5 ETH
+5. Navigate to https://app.balancer.fi/#/sepolia/faucet
 6. Pick whatever token you will want to trade and press the `Drip` button
 7. Wait for your transaction to get mined
 8. Repeat step 6 and 7 for the other tokens you will want to trade
-9. Launch balancer, paste your wallet address from MetaMask, select the Goerli network
+9. Launch balancer, paste your wallet address from MetaMask, select the Sepolia network
 
 ## disclaimer
 
